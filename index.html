@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="js/slick.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+</head>
+
+<body>
+
+	<a href="#" onclick="getAllEntriesMetadata()">getAllEntriesMetadata</a>
+	<br>
+	<a href="#" onclick="getPost('2013.01.01@post1_title')">getEntryByName</a>
+	<br>
+	<br>
+
+	<h3>All entries:</h3>
+	<div class="allEntries"></div>
+
+	<h3>One entry:</h3>
+	<div class="oneEntry"></div>
+
+</body>
+
+<script type="text/javascript">	
+	
+	function getPost(postName) {
+		var appendHandler = ".oneEntry";
+		var wrapper = "{{title}} <b>at</b> {{date}}<br>{{content}}<br>";
+		getEntryByName(postName, appendHandler, wrapper);
+	}
+
+	function getAllEntries() {
+		var appendHandler = ".allEntries";
+		var wrapper = "{{title}} <b>at</b> {{date}}<br>"
+		getAllEntriesMetadata(appendHandler, wrapper);
+	}
+
+</script>
+
+</html>
