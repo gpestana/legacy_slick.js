@@ -32,7 +32,7 @@ var repo = "blog-posts"
  		content = decodeContent(rawData.content);
  		data = [metadata[0], metadata[1], content];
 
-		addToDOM([data], appendHandler, wrapper);
+ 		addToDOM([data], appendHandler, wrapper);
  	}); 
  }
 
@@ -53,12 +53,29 @@ var repo = "blog-posts"
  	return atob(codedContet.replace(/\s/g, ''));
  }
 
+
  function addToDOM(data, appendHandler, wrapper) {
- 	console.log(data);
+ 	console.log(data)
  	for(var i=0; i<data.length; i++) {
  		replace1 = wrapper.replace('{{date}}', data[i][0]);
  		replace2 = replace1.replace('{{title}}', data[i][1]);
- 		//final_res = replace2.replace('{{content}}', data[i][2]);
- 		$(appendHandler).append(replace2);
+ 		final_res = replace2.replace('{{content}}', data[i][2]);
+ 		$(appendHandler).append(final_res);
  	}
+ }
+
+
+ function template() {
+ 	var file = '';
+ 	$.ajax({
+ 		type: 'GET',
+ 		url: 'js/string',
+ 		success: function (file_html) {
+        // pass the data to the var
+        var file = file_html;
+
+        // success
+        alert('success : ' + file);
+    }
+});
  }
