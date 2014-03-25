@@ -37,6 +37,13 @@ var repo = "blog-posts"
  }
 
 
+
+function testAPI(postTitle, templatePath ) {
+	console.log(postTitle);
+
+	template('templates/'+templatePath);
+}
+
 /*
  * Support functions
  */
@@ -65,17 +72,17 @@ var repo = "blog-posts"
  }
 
 
- function template() {
+ function template(templatePath) {
  	var file = '';
  	$.ajax({
  		type: 'GET',
- 		url: 'js/string',
+ 		url: templatePath,
  		success: function (file_html) {
         // pass the data to the var
         var file = file_html;
 
         // success
-        alert('success : ' + file);
+     	$('.oneEntry').append(file);   
     }
 });
  }
