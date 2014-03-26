@@ -20,8 +20,13 @@
 	<br>
 
 	<h3>All entries:</h3>
-	<div class="allEntries"></div>
 
+	<ul>
+	<div class="listEntries"></div>	
+	</ul>
+
+	<br>
+	<br>
 	<h3>One entry:</h3>
 	<div class="oneEntry"></div>
 
@@ -46,8 +51,11 @@
 
 	(function() {
 		Slick.setGithubConfigs("gpestana", "blog-posts");
-		Slick.fetchSingleEntry();
-		Slick.fetchSingleEntryDB();
+		
+		Slick.fetchAllEntriesMetadata('.listEntries','listEntries.html');
+
+		Slick.fetchSingleEntry('2013.01.01@post1_title','.oneEntry','singleEntry.html');
+	
 	})();
 
 </script>

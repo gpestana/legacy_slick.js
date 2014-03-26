@@ -1,46 +1,80 @@
-var user = "gpestana"
-var repo = "blog-posts"
-
 /*
  * Object
  */
 
-var Slick = (
-	function() {
-		var user;
-		var repo;
+ var Slick = (
+ 	function() {
+ 		var user;
+ 		var repo;
+ 		//Is this cache system working ? Test!
+ 		var allEntriesMetadata_cache;
 
-		var allEntriesMetadata_cache;
 
-		function setGithubConfigs(user, repo) {
-			this.user = user;
-			this.repo = repo;
-			
-		}
+ 		function setGithubConfigs(user, repo) {
+ 			this.user = user;
+ 			this.repo = repo;			
+ 		}
 
-		function fecthAllEntriesMetadataDB() {
-			console.log("fecthAllEntriesMetadataDB");
-		}
+ 		function fecthAllEntriesMetadataDB(user, repo, callback) {
+ 			data = [];
+ 			getResourceGithub(user+"/"+repo+"/contents", 
+ 				function(rawData) {  		
+ 					for(var i = 0; i<rawData.length; i++) {
+ 						var newEntry = new Object();
+ 						metadata = rawData[i].name.split("@");
+ 						data.push([metadata[0], metadata[1]]);
+ 					}
+ 					callback(data);
+ 				});
+ 		}
 
-		function fetchSingleEntryDB() {
-			console.log("fetchSingleEntryDB");	
-		}
+ 		function fetchSingleEntryDB(user, repo, entry_name, callback) {
+ 			getResourceGithub(user+"/"+repo+"/contents/"+entry_name, 
+ 				function(rawData) {
+ 					metadata = rawData.name.split("@");
+ 					content = decodeContent(rawData.content);
+ 					data = [metadata[0], metadata[1], content];
+ 						
+ 					callback(data);
+ 				}); 
+ 		}
 
-		function fetchSingleEntry() {
-			console.log("fetchSingleEntry");	
-		}
+ 		function fetchAllEntriesMetadata(appendHandler, templatePath) {
+ 			if (typeof(this.allEntriesMetadata_cache) == 'undefined') {
+ 				fecthAllEntriesMetadataDB(this.user,this.repo, function(data) {
+ 					this.allEntriesMetadata_cache = data;
+ 					fetchTemplate(templatePath, function(wrapper) {
+ 						addToDOM(data, appendHandler, wrapper);
+ 					});
+ 			});	
+ 			} else {
+ 				fetchTemplate(templatePath, function(wrapper) {
+ 					addToDOM(data, appendHandler, wrapper);
+ 			});
+ 		}
+ 	}
 
-		function fetchAllEntriesMetadata() {
-			console.log("fetchAllEntriesMetadata");	
-		}
 
-		return {
-			setGithubConfigs: setGithubConfigs,
-			fetchSingleEntry: fetchSingleEntry,
-			fetchAllEntriesMetadata: fetchAllEntriesMetadata
-		}
+ 	function fetchSingleEntry(entry_name, appendHandler, templatePath) {
+ 		fetchSingleEntryDB(this.user, this.repo, entry_name, function(data) {
+ 			fetchTemplate(templatePath, function(wrapper) {
+ 				addToDOM(data, appendHandler, wrapper);
+ 			});
+ 		});	
+ 	}
 
- 	})();
+
+ 	function populateTemplate() {
+ 		console.log("populateTemplate")
+ 	}
+
+ 	return {
+ 		setGithubConfigs: setGithubConfigs,
+ 		fetchSingleEntry: fetchSingleEntry,
+ 		fetchAllEntriesMetadata: fetchAllEntriesMetadata
+ 	}
+
+ })();
 
 
 
@@ -53,43 +87,14 @@ var Slick = (
  * Interface --> REFACTOR!
  */
 
- function getAllEntriesMetadata(appendHandler, wrapper) {
- 	data = [];
- 	getResourceGithub(user+"/"+repo+"/contents", function(rawData) {  		
- 		for(var i = 0; i<rawData.length; i++) {
- 			var newEntry = new Object();
- 			metadata = rawData[i].name.split("@");
- 			
- 			//patch to remove
- 			if (typeof(metadata[1]) == 'undefined') {
- 				metadata[1] = 'undefined';
- 			}
- 			
- 			data.push([metadata[0], metadata[1]]);
- 			//add to html
- 		}
- 		console.log(data);
- 		addToDOM(data, appendHandler, wrapper);
- 	});
- }
-
 
  function getEntryByName(entry_name, appendHandler, wrapper) {
  	getResourceGithub(user+"/"+repo+"/contents/"+entry_name, function(rawData) {
  		metadata = rawData.name.split("@");
  		content = decodeContent(rawData.content);
  		data = [metadata[0], metadata[1], content];
-
  		addToDOM([data], appendHandler, wrapper);
  	}); 
- }
-
-
-
- function testAPI(postTitle, templatePath ) {
- 	console.log(postTitle);
-
- 	template('templates/'+templatePath);
  }
 
 /*
@@ -110,7 +115,11 @@ var Slick = (
 
 
  function addToDOM(data, appendHandler, wrapper) {
- 	console.log(data)
+ 	console.log("addToDOM");
+ 	console.log(appendHandler)
+ 	console.log(wrapper);
+ 	console.log(data);
+
  	for(var i=0; i<data.length; i++) {
  		replace1 = wrapper.replace('{{date}}', data[i][0]);
  		replace2 = replace1.replace('{{title}}', data[i][1]);
@@ -120,18 +129,14 @@ var Slick = (
  }
 
 
- function template(templatePath) {
+ function fetchTemplate(templatePath, addToDOMcallback) {
  	var file = '';
  	$.ajax({
  		type: 'GET',
- 		url: templatePath,
- 		success: function (file_html) {
-        // pass the data to the var
-        var file = file_html;
-
-        // success
-        $('.oneEntry').append(file);   
-    }
-});
+ 		url: "templates/"+templatePath,
+ 		success: function (wrapper) {
+ 			addToDOMcallback(wrapper);   
+ 		}
+ 	});
  }
 
