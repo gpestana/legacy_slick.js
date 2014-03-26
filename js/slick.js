@@ -2,7 +2,55 @@ var user = "gpestana"
 var repo = "blog-posts"
 
 /*
- * Interface
+ * Object
+ */
+
+var Slick = (
+	function() {
+		var user;
+		var repo;
+
+		var allEntriesMetadata_cache;
+
+		function setGithubConfigs(user, repo) {
+			this.user = user;
+			this.repo = repo;
+			
+		}
+
+		function fecthAllEntriesMetadataDB() {
+			console.log("fecthAllEntriesMetadataDB");
+		}
+
+		function fetchSingleEntryDB() {
+			console.log("fetchSingleEntryDB");	
+		}
+
+		function fetchSingleEntry() {
+			console.log("fetchSingleEntry");	
+		}
+
+		function fetchAllEntriesMetadata() {
+			console.log("fetchAllEntriesMetadata");	
+		}
+
+		return {
+			setGithubConfigs: setGithubConfigs,
+			fetchSingleEntry: fetchSingleEntry,
+			fetchAllEntriesMetadata: fetchAllEntriesMetadata
+		}
+
+ 	})();
+
+
+
+
+
+
+
+
+/*
+ * Interface --> REFACTOR!
  */
 
  function getAllEntriesMetadata(appendHandler, wrapper) {
@@ -38,11 +86,11 @@ var repo = "blog-posts"
 
 
 
-function testAPI(postTitle, templatePath ) {
-	console.log(postTitle);
+ function testAPI(postTitle, templatePath ) {
+ 	console.log(postTitle);
 
-	template('templates/'+templatePath);
-}
+ 	template('templates/'+templatePath);
+ }
 
 /*
  * Support functions
@@ -82,7 +130,8 @@ function testAPI(postTitle, templatePath ) {
         var file = file_html;
 
         // success
-     	$('.oneEntry').append(file);   
+        $('.oneEntry').append(file);   
     }
 });
  }
+
