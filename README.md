@@ -1,5 +1,5 @@
 ## slick.js
-- - -
+
 
 ####Disclaimer 31.03 -  both *slick.js* and its documentation still in a beta and under development process. Some stuff has still to be implemented and refactored. Anyways, contributions and ideas are welome!
 
