@@ -9,13 +9,7 @@
  		//Is this cache system working ? Test!
  		var allEntriesMetadata_cache;
 
-
- 		function setGithubConfigs(user, repo) {
- 			this.user = user;
- 			this.repo = repo;			
- 		}
-
- 		function fecthAllEntriesMetadataDB(user, repo, callback) {
+ 		function _getAllEntriesGithub(user, repo, callback) {
  			data = [];
  			getResourceGithub(user+"/"+repo+"/contents", 
  				function(rawData) {  		
@@ -28,20 +22,26 @@
  				});
  		}
 
- 		function fetchSingleEntryDB(user, repo, entry_name, callback) {
+ 		function _getSingleEntryGithub(user, repo, entry_name, callback) {
  			getResourceGithub(user+"/"+repo+"/contents/"+entry_name, 
  				function(rawData) {
  					metadata = rawData.name.split("@");
  					content = decodeContent(rawData.content);
- 					data = [metadata[0], metadata[1], content];
+ 					data = [[metadata[0], metadata[1], content]];
  						
  					callback(data);
  				}); 
  		}
 
+
+ 		function setGithubConfigs(user, repo) {
+ 			this.user = user;
+ 			this.repo = repo;			
+ 		}
+
  		function fetchAllEntriesMetadata(appendHandler, templatePath) {
  			if (typeof(this.allEntriesMetadata_cache) == 'undefined') {
- 				fecthAllEntriesMetadataDB(this.user,this.repo, function(data) {
+ 				_getAllEntriesGithub(this.user,this.repo, function(data) {
  					this.allEntriesMetadata_cache = data;
  					fetchTemplate(templatePath, function(wrapper) {
  						addToDOM(data, appendHandler, wrapper);
@@ -54,18 +54,12 @@
  		}
  	}
 
-
  	function fetchSingleEntry(entry_name, appendHandler, templatePath) {
- 		fetchSingleEntryDB(this.user, this.repo, entry_name, function(data) {
+ 		_getSingleEntryGithub(this.user, this.repo, entry_name, function(data) {
  			fetchTemplate(templatePath, function(wrapper) {
- 				addToDOM(data, appendHandler, wrapper);
+ 				addToDOM([data], appendHandler, wrapper);
  			});
  		});	
- 	}
-
-
- 	function populateTemplate() {
- 		console.log("populateTemplate")
  	}
 
  	return {
@@ -76,26 +70,6 @@
 
  })();
 
-
-
-
-
-
-
-
-/*
- * Interface --> REFACTOR!
- */
-
-
- function getEntryByName(entry_name, appendHandler, wrapper) {
- 	getResourceGithub(user+"/"+repo+"/contents/"+entry_name, function(rawData) {
- 		metadata = rawData.name.split("@");
- 		content = decodeContent(rawData.content);
- 		data = [metadata[0], metadata[1], content];
- 		addToDOM([data], appendHandler, wrapper);
- 	}); 
- }
 
 /*
  * Support functions
@@ -113,21 +87,15 @@
  	return atob(codedContet.replace(/\s/g, ''));
  }
 
-
  function addToDOM(data, appendHandler, wrapper) {
- 	console.log("addToDOM");
- 	console.log(appendHandler)
- 	console.log(wrapper);
- 	console.log(data);
-
- 	for(var i=0; i<data.length; i++) {
- 		replace1 = wrapper.replace('{{date}}', data[i][0]);
- 		replace2 = replace1.replace('{{title}}', data[i][1]);
- 		final_res = replace2.replace('{{content}}', data[i][2]);
+ 	orderedData = data.reverse();
+ 	for(var i=0; i<orderedData.length; i++) {
+ 		replace1 = wrapper.replace('{{date}}', orderedData[i][0]);
+ 		replace2 = replace1.replace('{{title}}', orderedData[i][1]);
+ 		final_res = replace2.replace('{{content}}', orderedData[i][2]);
  		$(appendHandler).append(final_res);
  	}
  }
-
 
  function fetchTemplate(templatePath, addToDOMcallback) {
  	var file = '';
