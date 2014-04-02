@@ -19,6 +19,10 @@
 
 	<br>
 
+	<a href="#" onclick="Slick.getMeta()">testMetaCache</a>
+
+	<br>
+
 	<h3>All entries:</h3>
 
 	<ul>
@@ -47,15 +51,18 @@
 		getAllEntriesMetadata(appendHandler, wrapper);
 	}
 
-
-
 	(function() {
-		Slick.setGithubConfigs("gpestana", "blog-posts");
-
-		Slick.fetchAllEntriesMetadata('.listEntries','listEntries.html');
+		Slick.setEnv(
+			"gpestana","blog-posts",
 		
-		Slick.fetchSingleEntry('2013.01.01@post1_title','.oneEntry','singleEntry.html');
+			{plugin: fetchAllEntriesMetadata, appendHandler:".allEntries", templatePath:"listEntries.html"},
+			{pluginName:"func2", appendHandler:".allEntries2", templatePath:"/here/temp2"}
+			);
+
+
 	})();
+
+
 
 </script>
 
