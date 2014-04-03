@@ -2,6 +2,7 @@
  * Object
  */
 
+
  var Slick = {
  	setRepo: function(repo) {
  		this.gitRepo = repo;
@@ -16,7 +17,7 @@
 
  	setAllEntriesMetadata: function(metadata) {
  		this.allEntriesMetadata = metadata;
- 	}
+ 	},
 
  	setEnv: function() {
  		this.setUser(arguments[0]);
@@ -24,16 +25,30 @@
  		this.setPlugins(Array.prototype.slice.call(arguments, 2));
 
  		getAllEntriesMetadataToCache(function() {
- 				asyncExecuter(Slick.plugins);
+ 			asyncExecuter(Slick.plugins);
  		});
  	}
  };
 
  function asyncExecuter(listPlugins) {
+ 	
+
+ 	
  	for(var i=0; i<listPlugins.length; i++) {
-		//call funcs with params
-		console.log(listPlugins[i]);
-		//plugins[0]['plugin'](plugins.shift());
+
+ 		var pluginArgs = [];
+ 		var pluginName = listPlugins["pluginName"];
+ 		var listArgs = Array.prototype.slice.call(listPlugins, 1)[0];
+
+ 		console.log(pluginName);
+ 		console.log(listArgs);
+		/*
+		for(var key in listPlugins) {
+			pluginArgs.push(listPlugins[key]);
+		}*/
+
+
+		window[listPlugins[i]["pluginName"]](pluginArgs);
 	}
 };
 
@@ -44,72 +59,26 @@ function getAllEntriesMetadataToCache(callback) {
 	var repo = Slick.gitRepo;
 	
 	getResourceGithub(user+"/"+repo+"/contents", 
-		function(rawData, Slick) {  		
+		function(rawData) {  		
 			for(var i = 0; i<rawData.length; i++) {
 				var newEntry = new Object();
 				metadata = rawData[i].name.split("@");
 				data.push([metadata[0], metadata[1]]);
 			}
 			this.allEntriesMetadata_cache = data;
-			console.log(Slick.setAllEntriesMetadata(allEntriesMetadata_cache));
+			Slick.setAllEntriesMetadata(allEntriesMetadata_cache);
 			callback();
 		});	
 };
 
 
+function test(args) {
+	console.log("args: ");
+	console.log(args);
+}
 
 
-
-
-var olSlick = (
-	function() {
-		var user;
-		var repo;
- 		//Is this cache system working ? Test!
- 		var allEntriesMetadata_cache;
-
- 		function getGithubUser() {
- 			return this.user;
- 		}
- 		
- 		function getGithubRepo() {
- 			return this.gitRepo;
- 		}
- 		
- 		function getAllEntriesMetadata() {
- 			console.log(this.repo);
- 			return allEntriesMetadata_cache; 
- 		}
-
- 		functiofunction setAllEntriesMetadata(data) {
- 			this.allEntriesMetadata_cache = data;
- 		}n setAllEntriesMetadata(data) {
- 			this.allEntriesMetadata_cache = data;
- 		}
-
- 		/*New organization*/
- 		function setEnv() {
- 			gitUser = arguments[0];
- 			gitRepo = arguments[1];
- 			plugins = Array.prototype.slice.call(arguments, 2);
-
- 			//this.user = gitUser;
- 			//this.repo = gitRepo;
-
- 			_getAllEntriesMetadataToCache(gitUser, gitRepo, function() {
-				//trigger async function executer
-				_asyncExecuter(plugins);
-			});
- 		};
-
- 		function _asyncExecuter() {
- 			pluginsData = arguments[0];
- 			for(var i=0; i<pluginsData.length; i++) {
-				//call funcs with params
-				console.log(pluginsData[i]);
-				pluginsData[0]['plugin'](pluginsData.shift());
-			}}
-
+/*
 
 			function _getAllEntriesMetadataToCache(user, repo, callback) {
 				data = [];
@@ -150,21 +119,22 @@ var olSlick = (
 		})();
 
 
-		/*Native Plugins*/
+*/
+/*Native Plugins*/
 
-		function fetchAllEntriesMetadata() {
-			
-			appendHandler = arguments[0]['appendHandler'];
-			templatePath = arguments[0]['templatePath'];
+function fetchAllEntriesMetadata() {
 
-			console.log(Slick.getAllEntriesMetadata());
+	appendHandler = arguments[0]['appendHandler'];
+	templatePath = arguments[0]['templatePath'];
 
-			fetchTemplate(templatePath, function(wrapper) {
-				addToDOM(Slick.getAllEntriesMetadata(), appendHandler, wrapper);
-			});
-		}
+	console.log(Slick.getAllEntriesMetadata());
 
-		function fetchSingleEntry(entry_name, appendHandler, templatePath) {
+	fetchTemplate(templatePath, function(wrapper) {
+		addToDOM(Slick.getAllEntriesMetadata(), appendHandler, wrapper);
+	});
+}
+
+function fetchSingleEntry(entry_name, appendHandler, templatePath) {
  			//get Next and Previous post
  			_getSingleEntryGithub(this.user, this.repo, entry_name, function(data) {
  				fetchTemplate(templatePath, function(wrapper) {
