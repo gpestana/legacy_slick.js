@@ -2,10 +2,69 @@
  * Object
  */
 
- var Slick = (
- 	function() {
- 		var user;
- 		var repo;
+ var Slick = {
+ 	setRepo: function(repo) {
+ 		this.gitRepo = repo;
+ 	},
+ 	setUser: function(user) {
+ 		this.gitUser = user;
+ 	},
+
+ 	setPlugins: function(plugins) {
+ 		this.plugins = plugins;
+ 	},
+
+ 	setAllEntriesMetadata: function(metadata) {
+ 		this.allEntriesMetadata = metadata;
+ 	}
+
+ 	setEnv: function() {
+ 		this.setUser(arguments[0]);
+ 		this.setRepo(arguments[1]);
+ 		this.setPlugins(Array.prototype.slice.call(arguments, 2));
+
+ 		getAllEntriesMetadataToCache(function() {
+ 				asyncExecuter(Slick.plugins);
+ 		});
+ 	}
+ };
+
+ function asyncExecuter(listPlugins) {
+ 	for(var i=0; i<listPlugins.length; i++) {
+		//call funcs with params
+		console.log(listPlugins[i]);
+		//plugins[0]['plugin'](plugins.shift());
+	}
+};
+
+
+function getAllEntriesMetadataToCache(callback) {
+	data = [];
+	var user = Slick.gitUser;
+	var repo = Slick.gitRepo;
+	
+	getResourceGithub(user+"/"+repo+"/contents", 
+		function(rawData, Slick) {  		
+			for(var i = 0; i<rawData.length; i++) {
+				var newEntry = new Object();
+				metadata = rawData[i].name.split("@");
+				data.push([metadata[0], metadata[1]]);
+			}
+			this.allEntriesMetadata_cache = data;
+			console.log(Slick.setAllEntriesMetadata(allEntriesMetadata_cache));
+			callback();
+		});	
+};
+
+
+
+
+
+
+var olSlick = (
+	function() {
+		var user;
+		var repo;
  		//Is this cache system working ? Test!
  		var allEntriesMetadata_cache;
 
@@ -22,7 +81,9 @@
  			return allEntriesMetadata_cache; 
  		}
 
- 		function setAllEntriesMetadata(data) {
+ 		functiofunction setAllEntriesMetadata(data) {
+ 			this.allEntriesMetadata_cache = data;
+ 		}n setAllEntriesMetadata(data) {
  			this.allEntriesMetadata_cache = data;
  		}
 
@@ -32,8 +93,8 @@
  			gitRepo = arguments[1];
  			plugins = Array.prototype.slice.call(arguments, 2);
 
- 			this.user = gitUser;
- 			this.repo = gitRepo;
+ 			//this.user = gitUser;
+ 			//this.repo = gitRepo;
 
  			_getAllEntriesMetadataToCache(gitUser, gitRepo, function() {
 				//trigger async function executer
