@@ -38,29 +38,18 @@
 </body>
 
 <script type="text/javascript">	
-	
-	function getPost(postName) {
-		var appendHandler = ".oneEntry";
-		var wrapper = "{{title}} <b>at</b> {{date}}<br>{{content}}<br>";
-		getEntryByName(postName, appendHandler, wrapper);
-	}
-
-	function getAllEntries() {
-		var appendHandler = ".allEntries";
-		var wrapper = "{{title}} <b>at</b> {{date}}<br>"
-		getAllEntriesMetadata(appendHandler, wrapper);
-	}
 
 	(function() {
 		Slick.setEnv(
 			"gpestana","blog-posts",
 		
-			{pluginName: "test", appendHandler:".allEntries", templatePath:"listEntries.html"},
-			{pluginName:"test", appendHandler:".allEntries2", templatePath:"/here/temp2"}
+			{pluginName: "fetchSingleEntry", entryTitle: "2013.01.01@post1_title", appendHandler:".oneEntry", templatePath:"singleEntry.html"},
+
+			{pluginName:"fetchAllEntriesMetadata", appendHandler:".allEntries", templatePath:"listEntries.html"}
 			);
+	}
 
-
-	})();
+	)();
 
 
 

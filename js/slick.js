@@ -30,26 +30,30 @@
  	}
  };
 
+
  function asyncExecuter(listPlugins) {
- 	
-
- 	
  	for(var i=0; i<listPlugins.length; i++) {
-
- 		var pluginArgs = [];
- 		var pluginName = listPlugins["pluginName"];
- 		var listArgs = Array.prototype.slice.call(listPlugins, 1)[0];
-
- 		console.log(pluginName);
- 		console.log(listArgs);
-		/*
-		for(var key in listPlugins) {
-			pluginArgs.push(listPlugins[key]);
-		}*/
-
-
-		window[listPlugins[i]["pluginName"]](pluginArgs);
+ 		actualPlugin = listPlugins[i];
+ 		var pluginName = actualPlugin["pluginName"];
+ 		var pluginArgs=getArgsPlugin(actualPlugin);
+		//execute plugin with its arguments
+		console.log(pluginArgs);
+		window[[pluginName]](pluginArgs);
 	}
+};
+
+
+function getArgsPlugin(pluginObject) {
+	args = [];
+	var index = "pluginName";
+	for(var key in pluginObject) {
+		if(index=="pluginName") {
+			index="pluginArgs";
+			continue;
+		};
+		args.push(pluginObject[key]);
+	}
+	return args;
 };
 
 
@@ -72,54 +76,9 @@ function getAllEntriesMetadataToCache(callback) {
 };
 
 
-function test(args) {
-	console.log("args: ");
-	console.log(args);
-}
 
 
-/*
 
-			function _getAllEntriesMetadataToCache(user, repo, callback) {
-				data = [];
-				getResourceGithub(user+"/"+repo+"/contents", 
-					function(rawData) {  		
-						for(var i = 0; i<rawData.length; i++) {
-							var newEntry = new Object();
-							metadata = rawData[i].name.split("@");
-							data.push([metadata[0], metadata[1]]);
-						}
-						this.allEntriesMetadata_cache = data;
-						console.log(Slick.setAllEntriesMetadata(allEntriesMetadata_cache));
-						callback();
-					});	
-			};
-
-
-			function _getSingleEntryGithub(user, repo, entry_name, callback) {
-				getResourceGithub(user+"/"+repo+"/contents/"+entry_name, 
-					function(rawData) {
-						metadata = rawData.name.split("@");
-						content = decodeContent(rawData.content);
-						data = [[metadata[0], metadata[1], content]];
-
-						callback(data);
-					}); 
-			}
-
-
-			return {
-				getGithubUser: getGithubUser,
-				getGithubRepo: getGithubRepo,
-				getAllEntriesMetadata: getAllEntriesMetadata,
-				setAllEntriesMetadata: setAllEntriesMetadata,
-				setEnv: setEnv
-			}
-
-		})();
-
-
-*/
 /*Native Plugins*/
 
 function fetchAllEntriesMetadata() {
@@ -127,20 +86,25 @@ function fetchAllEntriesMetadata() {
 	appendHandler = arguments[0]['appendHandler'];
 	templatePath = arguments[0]['templatePath'];
 
-	console.log(Slick.getAllEntriesMetadata());
+	console.log(Slick.allEntriesMetadata);
 
 	fetchTemplate(templatePath, function(wrapper) {
 		addToDOM(Slick.getAllEntriesMetadata(), appendHandler, wrapper);
 	});
 }
 
-function fetchSingleEntry(entry_name, appendHandler, templatePath) {
+function fetchSingleEntry(args) {
+			var entry_name = args[0];
+			var appendHandler = args[1];
+			var templatePath = args[2];
+
  			//get Next and Previous post
- 			_getSingleEntryGithub(this.user, this.repo, entry_name, function(data) {
- 				fetchTemplate(templatePath, function(wrapper) {
- 					addToDOM([data], appendHandler, wrapper);
- 				});
- 			});	
+ 			getSingleEntryGithub(Slick.gitUser, Slick.gitRepo, entry_name, 
+ 				function(data) {
+ 					fetchTemplate(templatePath, function(wrapper) {
+ 						addToDOM([data], appendHandler, wrapper);
+ 					});
+ 				});	
  		}
 
 
@@ -156,12 +120,25 @@ function fetchSingleEntry(entry_name, appendHandler, templatePath) {
  	});	
  }
 
+ function getSingleEntryGithub(user, repo, entry_name, callback) {
+ 	getResourceGithub(user+"/"+repo+"/contents/"+entry_name, 
+ 		function(rawData) {
+ 			metadata = rawData.name.split("@");
+ 			content = decodeContent(rawData.content);
+ 			data = [[metadata[0], metadata[1], content]];
+
+ 			callback(data);
+ 		}); 
+ }
+
+
  function decodeContent(codedContet) {
  	return atob(codedContet.replace(/\s/g, ''));
  }
 
  function addToDOM(data, appendHandler, wrapper) {
  	orderedData = data.reverse();
+ 	console.log(orderedData);
  	for(var i=0; i<orderedData.length; i++) {
  		replace1 = wrapper.replace('{{date}}', orderedData[i][0]);
  		replace2 = replace1.replace('{{title}}', orderedData[i][1]);
