@@ -36,7 +36,7 @@ function fetchAllEntriesMetadata() {
 		return [templatePath, appendHandler];
 }
 
-function fetchSingleEntry(args) {
+function fetchSingleEntry(args, callback) {
 			var entryName = args[0];
 			var appendHandler = args[1];
 			var templatePath = args[2];
@@ -49,9 +49,13 @@ function fetchSingleEntry(args) {
  					metadata = rawData.name.split("@");
  					content = decodeContent(rawData.content);
  					data = [[metadata[0], metadata[1], content]]; 					
- 					//use native addToDOM 
- 					//Any other way to do this async without calling a framework's lib directly ?
- 					return addToDOM(data, templatePath, appendHandler);
+
+
+ 					//this is the way data should be returned from source
+ 					data = {title:'title1', date:'date1', content:'content1'}
+ 					
+ 					//go back to framework:
+ 					callback([data, templatePath, appendHandler]);
  		}); 
  		}
 

@@ -33,15 +33,11 @@
  		var pluginName = actualPlugin["pluginName"];
  		var pluginArgs=getArgsPlugin(actualPlugin);
 		//execute plugin with its arguments
-		var retObj;
-		retObj = window[[pluginName]](pluginArgs);
-		console.log(pluginName);
-		console.log("retObj in async: ")
-		console.log(retObj);
-		//addToDOM(retObj);
+
+		window[[pluginName]](pluginArgs, addToDOMnew);
+
 	}
 };
-
 
 function getArgsPlugin(pluginObject) {
 	args = [];
@@ -57,27 +53,30 @@ function getArgsPlugin(pluginObject) {
 };
 
 
+function addToDOMnew(argsFromPlugin) {
+	var data = argsFromPlugin[0];
+	var templatePath = argsFromPlugin[1];
+	var appendHandler = argsFromPlugin[2];
 
- function addToDOM(data, appendHandler, wrapper) {
- 	orderedData = data.reverse();
- 	console.log(orderedData);
- 	for(var i=0; i<orderedData.length; i++) {
- 		replace1 = wrapper.replace('{{date}}', orderedData[i][0]);
- 		replace2 = replace1.replace('{{title}}', orderedData[i][1]);
- 		final_res = replace2.replace('{{content}}', orderedData[i][2]);
- 		$(appendHandler).append(final_res);
- 	}
- }
+	getWrapperFromTemplate(templatePath, function(wrapper) {
+		//populate wrapper with data
+		for(var key in data) {
+			wrapper = wrapper.replace('{{'+key+'}}', data[key]);
+		} 	
+	$(appendHandler).append(wrapper);
+});
+
+}
 
 
- function fetchTemplate(templatePath, addToDOMcallback) {
- 	var file = '';
- 	$.ajax({
- 		type: 'GET',
- 		url: "templates/"+templatePath,
- 		success: function (wrapper) {
- 			addToDOMcallback(wrapper);   
- 		}
- 	});
- }
+function getWrapperFromTemplate(templatePath, callback) {
+	var file = '';
+	$.ajax({
+		type: 'GET',
+		url: "templates/"+templatePath,
+		success: function (wrapper) {
+			callback(wrapper);
+		}
+	});
+}
 
