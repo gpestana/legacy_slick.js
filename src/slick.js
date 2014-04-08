@@ -34,7 +34,7 @@
  		var pluginArgs=getArgsPlugin(actualPlugin);
 		//execute plugin with its arguments
 
-		window[[pluginName]](pluginArgs, addToDOMnew);
+		window[[pluginName]](pluginArgs, addToDOM);
 
 	}
 };
@@ -53,7 +53,7 @@ function getArgsPlugin(pluginObject) {
 };
 
 
-function addToDOMnew(argsFromPlugin) {
+function addToDOM(argsFromPlugin) {
 	var data = argsFromPlugin[0];
 	var templatePath = argsFromPlugin[1];
 	var appendHandler = argsFromPlugin[2];
