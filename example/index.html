@@ -27,7 +27,7 @@
 	<h3>All entries:</h3>
 
 	<ul>
-	<div class="listEntries"></div>	
+	<div class="allEntries"></div>	
 	</ul>
 
 	<br>
@@ -44,10 +44,9 @@
 		Slick.setEnv(
 			"gpestana","blog-posts",
 		
-			{pluginName: "fetchSingleEntry", entryTitle: "2013.01.01@post1_title", appendHandler:".oneEntry", templatePath:"singleEntry.html"}
-			//,
-
-			//{pluginName:"fetchAllEntriesMetadata", appendHandler:".allEntries", templatePath:"listEntries.html"}
+			{pluginName: "fetchSingleEntry", entryTitle: "2013.01.01@post1_title", appendHandler:".oneEntry", templatePath:"singleEntry.html"},
+			
+			{pluginName:"fetchAllEntriesMetadata", appendHandler:".allEntries", templatePath:"listEntries.html"}
 			);
 	}
 

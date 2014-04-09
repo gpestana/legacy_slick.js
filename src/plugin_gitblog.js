@@ -24,16 +24,22 @@ function getAllEntriesMetadataToCache(callback) {
 };
 
 
-function fetchAllEntriesMetadata() {
+function fetchAllEntriesMetadata(args, callback) {
+	var appendHandler = args[0];
+	var templatePath = args[1];
+	var allEntries = Slick.allEntriesMetadata;
+	var data = [];
 
-	appendHandler = arguments[0]['appendHandler'];
-	templatePath = arguments[0]['templatePath'];
-	
-	/*fetchTemplate(templatePath, function(wrapper) {
-		addToDOM(Slick.getAllEntriesMetadata(), appendHandler, wrapper);
-	});
-		*/
-		return [templatePath, appendHandler];
+	allEntries.forEach(
+		function(entry) {
+			var newEntry = {};
+			newEntry['date'] = entry[0];
+			newEntry['title'] = entry[1];
+			data.push(newEntry);		
+		});
+
+	//addToDOM:
+	callback([data, templatePath, appendHandler]);
 }
 
 function fetchSingleEntry(args, callback) {
@@ -41,8 +47,7 @@ function fetchSingleEntry(args, callback) {
 			var appendHandler = args[1];
 			var templatePath = args[2];
 
-			console.log("---fetchSingleEntry");
- 			//get Next and Previous post
+ 			//TODO: get Next and Previous post
 
  			getResourceGithub(Slick.gitUser+"/"+Slick.gitRepo+"/contents/"+
  				entryName, function(rawData) {
@@ -50,12 +55,11 @@ function fetchSingleEntry(args, callback) {
  					content = decodeContent(rawData.content);
  					data = [[metadata[0], metadata[1], content]]; 					
 
-
- 					//this is the way data should be returned from source
+ 					//TODO:this is the way data should be returned from source
  					data = {title:'title1', date:'date1', content:'content1'}
  					
  					//go back to framework:
- 					callback([data, templatePath, appendHandler]);
+ 					callback([[data], templatePath, appendHandler]);
  		}); 
  		}
 

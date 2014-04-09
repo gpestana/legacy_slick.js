@@ -57,17 +57,47 @@ function addToDOM(argsFromPlugin) {
 	var data = argsFromPlugin[0];
 	var templatePath = argsFromPlugin[1];
 	var appendHandler = argsFromPlugin[2];
+	var finalStringToAppend = "";
 
-	getWrapperFromTemplate(templatePath, function(wrapper) {
-		//populate wrapper with data
-		for(var key in data) {
-			wrapper = wrapper.replace('{{'+key+'}}', data[key]);
-		} 	
-	$(appendHandler).append(wrapper);
-});
-
+	getWrapperFromTemplate(templatePath, 
+		function(wrapper) {	
+			data.forEach(function(entry) {
+				console.log(entry);
+				for(var key in entry) {
+					finalStringToAppend += f(wrapper,entry,key);
+				};
+				console.log(finalStringToAppend);
+			});
+		}
+	);
 }
 
+function f(wrapper, entry, key) {
+	console.log(entry[key]);
+	//console.log(wrapper = wrapper.replace('{{'+key+'}}', entry[key]));
+	return wrapper.replace('{{'+key+'}}', entry[key]);
+}
+	/*
+		//populate wrapper with data
+		data.forEach(function(entry) {
+		for(var key in entry) {
+			wrapper = wrapper.replace('{{'+key+'}}', entry[key]);
+			console.log(entry);
+			finalStringToAppend+=wrapper; 
+		}
+	}); 	
+
+		console.log(finalStringToAppend);
+	
+	appendData(appendHandler, finalStringToAppend);
+
+	});
+*/
+
+function appendData(appendHandler, data) {
+	$(appendHandler).children().remove();
+	$(appendHandler).append(data).hide().fadeIn(500);
+}
 
 function getWrapperFromTemplate(templatePath, callback) {
 	var file = '';
