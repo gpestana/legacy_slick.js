@@ -38,8 +38,14 @@ function fetchAllEntriesMetadata(args, callback) {
 			data.push(newEntry);		
 		});
 
-	//addToDOM:
+
+	//How data should come	
+	data =[ {title:'t11', date: 'd11', content:'c11'},
+			{title:'t22', date: 'd22', content:'c22'},
+			{title:'t33', date: 'd33', content:'c33'} ];
+
 	callback([data, templatePath, appendHandler]);
+
 }
 
 function fetchSingleEntry(args, callback) {

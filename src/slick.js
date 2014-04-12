@@ -59,40 +59,38 @@ function addToDOM(argsFromPlugin) {
 	var appendHandler = argsFromPlugin[2];
 	var finalStringToAppend = "";
 
+	//console.log(argsFromPlugin);
+	//console.log(data);
+
 	getWrapperFromTemplate(templatePath, 
 		function(wrapper) {	
 			data.forEach(function(entry) {
+			
 				console.log(entry);
-				for(var key in entry) {
-					finalStringToAppend += f(wrapper,entry,key);
-				};
-				console.log(finalStringToAppend);
-			});
-		}
-	);
+		
+		(function() {	
+				for (var key in entry) {
+					console.log(wrapper);
+					wrapper = wrapper.replace('{{'+key+'}}', entry[key]);
+				}
+
+				finalStringToAppend = finalStringToAppend.concat(wrapper);
+			})(wrapper, entry);
+		});
+
+			appendData(appendHandler, finalStringToAppend);
+			//console.log(finalStringToAppend);
+			//console.log("--");
+		});
+
 }
 
+
 function f(wrapper, entry, key) {
-	console.log(entry[key]);
+	//console.log(entry[key]);
 	//console.log(wrapper = wrapper.replace('{{'+key+'}}', entry[key]));
 	return wrapper.replace('{{'+key+'}}', entry[key]);
 }
-	/*
-		//populate wrapper with data
-		data.forEach(function(entry) {
-		for(var key in entry) {
-			wrapper = wrapper.replace('{{'+key+'}}', entry[key]);
-			console.log(entry);
-			finalStringToAppend+=wrapper; 
-		}
-	}); 	
-
-		console.log(finalStringToAppend);
-	
-	appendData(appendHandler, finalStringToAppend);
-
-	});
-*/
 
 function appendData(appendHandler, data) {
 	$(appendHandler).children().remove();
@@ -110,3 +108,8 @@ function getWrapperFromTemplate(templatePath, callback) {
 	});
 }
 
+
+
+function p(arg) {
+	console.log(arg);
+};
