@@ -2,7 +2,6 @@
  * Object
  */
 
-
  var Slick = {
  	setRepo: function(repo) {
  		this.gitRepo = repo;
@@ -57,40 +56,22 @@ function addToDOM(argsFromPlugin) {
 	var data = argsFromPlugin[0];
 	var templatePath = argsFromPlugin[1];
 	var appendHandler = argsFromPlugin[2];
-	var finalStringToAppend = "";
-
-	//console.log(argsFromPlugin);
-	//console.log(data);
 
 	getWrapperFromTemplate(templatePath, 
 		function(wrapper) {	
-			data.forEach(function(entry) {
-			
-				console.log(entry);
-		
-		(function() {	
-				for (var key in entry) {
-					console.log(wrapper);
-					wrapper = wrapper.replace('{{'+key+'}}', entry[key]);
-				}
-
-				finalStringToAppend = finalStringToAppend.concat(wrapper);
-			})(wrapper, entry);
-		});
-
-			appendData(appendHandler, finalStringToAppend);
-			//console.log(finalStringToAppend);
-			//console.log("--");
+			var finalContent ="";
+			data.forEach(
+				function(entry) {
+					finalContent = finalContent.concat(wrapper);
+					for (var key in entry) {
+						finalContent = finalContent.replace("{{"+key+"}}", entry[key]);
+					}
+			});
+			appendData(appendHandler, finalContent);
 		});
 
 }
 
-
-function f(wrapper, entry, key) {
-	//console.log(entry[key]);
-	//console.log(wrapper = wrapper.replace('{{'+key+'}}', entry[key]));
-	return wrapper.replace('{{'+key+'}}', entry[key]);
-}
 
 function appendData(appendHandler, data) {
 	$(appendHandler).children().remove();
@@ -107,9 +88,3 @@ function getWrapperFromTemplate(templatePath, callback) {
 		}
 	});
 }
-
-
-
-function p(arg) {
-	console.log(arg);
-};

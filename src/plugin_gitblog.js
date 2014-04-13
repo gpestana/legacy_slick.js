@@ -15,7 +15,9 @@ function getAllEntriesMetadataToCache(callback) {
 			for(var i = 0; i<rawData.length; i++) {
 				var newEntry = new Object();
 				metadata = rawData[i].name.split("@");
-				data.push([metadata[0], metadata[1]]);
+				newEntry['date'] = metadata[0];
+				newEntry['title'] = metadata[1];
+				data.push(newEntry);
 			}
 			this.allEntriesMetadata_cache = data;
 			Slick.allEntriesMetadata = allEntriesMetadata_cache;
@@ -28,23 +30,8 @@ function fetchAllEntriesMetadata(args, callback) {
 	var appendHandler = args[0];
 	var templatePath = args[1];
 	var allEntries = Slick.allEntriesMetadata;
-	var data = [];
 
-	allEntries.forEach(
-		function(entry) {
-			var newEntry = {};
-			newEntry['date'] = entry[0];
-			newEntry['title'] = entry[1];
-			data.push(newEntry);		
-		});
-
-
-	//How data should come	
-	data =[ {title:'t11', date: 'd11', content:'c11'},
-			{title:'t22', date: 'd22', content:'c22'},
-			{title:'t33', date: 'd33', content:'c33'} ];
-
-	callback([data, templatePath, appendHandler]);
+	callback([allEntries, templatePath, appendHandler]);
 
 }
 
@@ -54,17 +41,28 @@ function fetchSingleEntry(args, callback) {
 			var templatePath = args[2];
 
  			//TODO: get Next and Previous post
+ 			var nextPostName ="";
+ 			var lastPostName = "";
+
+ 			Slick.allEntriesMetadata.forEach(
+ 				function(entry) { 
+ 					if(entry['title'] == entryName) {
+ 						console.log(">> "+entry['title'])
+ 					}
+ 			});
+
 
  			getResourceGithub(Slick.gitUser+"/"+Slick.gitRepo+"/contents/"+
  				entryName, function(rawData) {
+ 					data = {};
  					metadata = rawData.name.split("@");
  					content = decodeContent(rawData.content);
- 					data = [[metadata[0], metadata[1], content]]; 					
 
- 					//TODO:this is the way data should be returned from source
- 					data = {title:'title1', date:'date1', content:'content1'}
- 					
- 					//go back to framework:
+ 					data['date'] = metadata[0];
+ 					data['title'] = metadata[1];
+ 					data['content'] = content;
+
+ 					//go back to framework -- addToDom
  					callback([[data], templatePath, appendHandler]);
  		}); 
  		}
