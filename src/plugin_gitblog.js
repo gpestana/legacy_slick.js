@@ -40,17 +40,8 @@ function fetchSingleEntry(args, callback) {
 			var appendHandler = args[1];
 			var templatePath = args[2];
 
- 			//TODO: get Next and Previous post
- 			var nextPostName ="";
- 			var lastPostName = "";
-
- 			Slick.allEntriesMetadata.forEach(
- 				function(entry) { 
- 					if(entry['title'] == entryName) {
- 						console.log(">> "+entry['title'])
- 					}
- 			});
-
+			//for getNext and getPrevious entry
+			Slick.currentEntry = entryName;
 
  			getResourceGithub(Slick.gitUser+"/"+Slick.gitRepo+"/contents/"+
  				entryName, function(rawData) {
@@ -79,3 +70,43 @@ function fetchSingleEntry(args, callback) {
  function decodeContent(codedContet) {
  	return atob(codedContet.replace(/\s/g, ''));
  }
+
+
+function getPreviousAndNextEntry(callback) {
+	var allEntriesMetadata = Slick.allEntriesMetadata;
+	var nextEntry ="ola"
+	var previousEntry ="adeus";
+	
+	for (var i=0; i<allEntriesMetadata.length; i++) {
+		var fullName = allEntriesMetadata[i]['date']+'@'+allEntriesMetadata[i]['title'];
+		if (Slick.currentEntry == fullName) {
+			nextEntry = allEntriesMetadata[i-1];
+			previousEntry = allEntriesMetadata[i+1];
+		}
+	}
+
+	callback(nextEntry, previousEntry);
+}
+
+function nextPost() {
+	getPreviousAndNextEntry(
+		function(nextEntry, previousEntry) {
+			console.log("nextEntry");
+			console.log(nextEntry);
+	});
+}
+
+function lastPost() {
+	getPreviousAndNextEntry(
+		function(nextEntry, previousEntry) {
+			console.log("previousEntry");
+			console.log(previousEntry);
+
+			Slick.setEnv(
+			"gpestana","blog-posts",
+			{pluginName: "fetchSingleEntry", 
+			entryTitle: previousEntry['date']+'@'+previousEntry['title'], 
+			appendHandler:".oneEntry", 
+			templatePath:"singleEntry.html"});
+	});
+}
