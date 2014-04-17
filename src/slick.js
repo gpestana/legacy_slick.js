@@ -3,6 +3,25 @@
  */
 
  var Slick = {
+
+	route: function() {
+		if (window.location.hash == '') {
+			return;
+		}
+
+		var url = window.location.href.split("#")[0];
+		var hash = window.location.href.split("#")[1];
+
+		Slick.hash = hash;
+
+		if (window.history.pushState) {
+			//pushState supported --> remove # from address
+			window.history.pushState('','',url);
+		}
+	},
+
+	hash: "",
+
  	setRepo: function(repo) {
  		this.gitRepo = repo;
  	},
@@ -15,6 +34,9 @@
  	},
 
  	setEnv: function() {
+
+ 		Slick.route();
+
  		this.setUser(arguments[0]);
  		this.setRepo(arguments[1]);
  		this.setPlugins(Array.prototype.slice.call(arguments, 2));
@@ -66,7 +88,7 @@ function addToDOM(argsFromPlugin) {
 					for (var key in entry) {
 						finalContent = finalContent.replace("{{"+key+"}}", entry[key]);
 					}
-			});
+				});
 			appendData(appendHandler, finalContent);
 		});
 
@@ -88,3 +110,4 @@ function getWrapperFromTemplate(templatePath, callback) {
 		}
 	});
 }
+
