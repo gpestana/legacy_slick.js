@@ -2,7 +2,8 @@
 <html>
 <head>
 	<script src="../src/slick.js"></script>
-	<script src="../src/plugin_gitblog.js"></script>
+	<script src="../src/plugin_gitDatabase.js"></script>
+	
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
 </head>
@@ -26,19 +27,19 @@
 
 <script type="text/javascript">	
 
-	(function() {
-		Slick.setEnv(
-			"gpestana","blog-posts",
-		
-			{pluginName: "fetchSingleEntry", entryTitle: "2013.01.01@post1_title", appendHandler:".oneEntry", templatePath:"singleEntry.html"},
-			
-			{pluginName:"fetchAllEntriesMetadata", appendHandler:".allEntries", templatePath:"listEntries.html"}
-			);
-	}
-
-	)();
-
-
+	slick.init('plugin_gitDatabase')
+		.run('plugin_gitDatabase', {
+			action: "fetchSingleEntry",
+			appendHandler: ".oneEntry",
+			templatePath: "singleEntry.html",
+			github: {username: "gpestana",repo:"blog-posts"}
+		})
+		.run('plugin_gitDatabase', {
+			action: "fetchAllEntries",
+			appendHandler:".allEntries",
+			templatePath: "listEntries.html",
+			github: {username: "gpestana", repo:"blog-posts"}
+		});
 
 </script>
 
