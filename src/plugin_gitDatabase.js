@@ -32,6 +32,7 @@
  	}
 
  	function fetchSingleEntry() {
+
  		console.log('fetchSingleEntry');
 
  		var user = arguments[0].github.username;
